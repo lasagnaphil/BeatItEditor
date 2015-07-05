@@ -1,7 +1,7 @@
 local gui = require "Quickie"
+require 'util'
 
 local Score = require 'score'
-local Renderer = require 'renderer'
 local Exporter = require 'exporter'
 
 local mousePressed = false
@@ -9,15 +9,20 @@ local mouseReleaseTrigger = false
 local isLoaded = false
 local fileInput = {text = "music.mp3"}
 local bpmInput = {text = ""}
+local zoomSlider = {value = .5}
 local musicSlider = {value = .5}
 
 function love.load()
     score = Score:new()
-    renderer = Renderer:new()
     exporter = Exporter:new()
 end
 
 function love.update(dt)
+    if score.isLoaded then score:update(dt) end
+    guiUpdate(dt)
+end
+
+function guiUpdate(dt)
     
     --
     -- the top row of objects
@@ -29,7 +34,6 @@ function love.update(dt)
     gui.Input{info = fileInput, size = {100}}
     if gui.Button{id = "Load", text = "Load"} then
         score:loadMusic(fileInput.text)
-        isLoaded = true
     end
     -- Close button
     if gui.Button{id = "Close", text = "Close"} then
@@ -42,7 +46,7 @@ function love.update(dt)
     gui.Input{info = bpmInput, size = {100}}
     if gui.Button{id = "SetBPM", text = "Set"} then
         -- set the score object's bpm to the input
-        score.bpm = tostring(bpmInput.text)
+        score.bpm = tonumber(bpmInput.text)
         if not score.bpm then
             love.window.showMessageBox("Error", "BPM must be a number", "info")
         end
@@ -51,7 +55,20 @@ function love.update(dt)
     gui.group.pop{}
     
     --
-    -- the editor
+    -- navigate editor
+    --
+    
+    gui.group.push{grow = "right", pos = {5,55}}
+    
+    gui.Label{text = "Zoom:", size = {50}}
+    if gui.Slider{info = zoomSlider, size = {100}} then
+        score.boundSeconds = zoomSlider.value * 8
+    end
+    
+    gui.group.pop{}
+    
+    --
+    -- music player
     --
     
     gui.group.push{grow = "right", pos = {5,305}}
@@ -76,19 +93,32 @@ function love.update(dt)
     
     -- Slider (to change position of song)
     gui.Label{text = "", size = {50}}
-    if isLoaded then
+    if score.isLoaded then
         if not mousePressed then
-            musicSlider.value = score.music:tell("seconds") / score.duration
-        else
-            if not score.isPaused then score.music:pause() end
-            score.music:seek(musicSlider.value * score.duration)
+            musicSlider.value = score.position / score.duration
         end
-        if mouseReleaseTrigger then
-            score.music:play()
-        end 
     end
-    gui.Slider{info = musicSlider, size = {250}}
+    if gui.Slider{info = musicSlider, size = {250}} then
+        score.isPaused = true
+        score.music:pause()
+        score.music:seek(musicSlider.value * score.duration)
+    end
     
+    gui.group.pop{}
+    
+    --
+    -- the checkpoint buttons
+    --
+    
+    gui.group.push{grow = "right", pos = {5,355}}
+    
+    if gui.Button{id = "Create Checkpoint", text = "Create Checkpoint", size = {120}} then
+        score:addCheckpoint()
+    end
+    
+    if gui.Button{id = "Goto Checkpoint", text = "Goto Checkpoint", size = {120}} then
+        score.music:seek(score.checkpoint)
+    end
     
     gui.group.pop{}
     
@@ -100,10 +130,17 @@ function updateMouseEvents() mouseReleaseTrigger = false end
 
 function love.draw()
     gui.core.draw()
+    score:draw()
+    drawFPS()
 end
 
 function love.keypressed(key, code)
     gui.keyboard.pressed(key)
+    if key == " " then
+        if not score.isPaused then
+            score:addNote()
+        end
+    end
 end
 
 function love.mousepressed(x, y, button)
