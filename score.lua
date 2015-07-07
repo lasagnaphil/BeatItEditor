@@ -1,10 +1,14 @@
 local class = require 'middleclass'
 
 local Note = require 'note'
+local IO = require 'IO'
 
 local Score = class('Score')
 
 function Score:initialize()
+    self.songname = "Test Song"
+    self.artist = "Test Artist"
+    
     self.notes = {}
     self.checkpoint = 0
     self.isLoaded = false
@@ -16,6 +20,8 @@ function Score:initialize()
     self.bounds = { l = 50, r = 750 }
     self.boundLength = self.bounds.r - self.target.x
     self.boundSeconds = 8 -- (how many seconds of notes shown in the screen
+    
+    self.io = IO:new()
 end
 
 function Score:loadMusic(filename)
@@ -48,6 +54,13 @@ function Score:draw()
     for _,note in ipairs(self.notes) do
         note:draw(self)
     end
+end
+
+function Score:import()
+    self.io:import(self)
+end
+function Score:export()
+    self.io:export(self)
 end
 
 return Score

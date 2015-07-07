@@ -2,7 +2,6 @@ local gui = require "Quickie"
 require 'util'
 
 local Score = require 'score'
-local Exporter = require 'exporter'
 
 local mousePressed = false
 local mouseReleaseTrigger = false
@@ -13,8 +12,8 @@ local zoomSlider = {value = .5}
 local musicSlider = {value = .5}
 
 function love.load()
+    love.window.setMode(1024, 768)
     score = Score:new()
-    exporter = Exporter:new()
 end
 
 function love.update(dt)
@@ -35,6 +34,7 @@ function guiUpdate(dt)
     if gui.Button{id = "Load", text = "Load"} then
         score:loadMusic(fileInput.text)
     end
+        
     -- Close button
     if gui.Button{id = "Close", text = "Close"} then
         
@@ -50,6 +50,14 @@ function guiUpdate(dt)
         if not score.bpm then
             love.window.showMessageBox("Error", "BPM must be a number", "info")
         end
+    end
+    
+    gui.Label{text = "", size = {50}}
+    if gui.Button{id = "Import", text = "Import"} then
+        score:import()
+    end
+    if gui.Button{id = "Export", text = "Export"} then
+        score:export()
     end
     
     gui.group.pop{}
