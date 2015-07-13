@@ -8,7 +8,7 @@ function IO:initialize()
 end
 
 function IO:import(score)
-    self.data = JSON:decode(
+--    self.data = JSON:decode(
 end
 
 function IO:export(score)
