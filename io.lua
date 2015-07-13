@@ -22,7 +22,7 @@ function IO:export(score)
     }
     
     for _, note in ipairs(score.notes) do
-        table.insert(self.data.notes, note.position)
+        table.insert(self.data.notes, note.position*1000)
     end
     
     local jsonData = JSON:encode_pretty(self.data)
