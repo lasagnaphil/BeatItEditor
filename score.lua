@@ -32,10 +32,21 @@ function Score:loadMusic(filename)
     self.isLoaded = true
 end
 
-function Score:addNote(pos, noteType)
-    table.insert(self.notes, Note:new((pos or self.position), (noteType or "default")))
+function Score:setBPM(bpm)
+    self.bpm = bpm
+    self.quantizedTime = 60 / bpm
 end
 
+function Score:addNote(pos, noteType)
+    local quantizedPosition = self.quantizedTime * math.floor(self.position / self.quantizedTime + 0.5)
+    table.insert(self.notes, Note:new((pos or quantizedPosition), (noteType or "default")))
+end
+
+function Score:updateNotePosition()
+    for _,note in ipairs(self.notes) do
+        note:updatePosition(self)
+    end
+end
 function Score:addCheckpoint()
     self.checkpoint = self.position
 end
@@ -53,6 +64,18 @@ function Score:draw()
     love.graphics.line(self.target.x,self.target.y-50,self.target.x,self.target.y+50)
     for _,note in ipairs(self.notes) do
         note:draw(self)
+    end
+end
+
+function Score:mousepressed(x, y, button)
+    for _,note in ipairs(self.notes) do
+        note:checkMousePressed(x-self.target.x, y-self.target.y, button)
+    end
+end
+
+function Score:mousereleased(x, y, button)
+    for _,note in ipairs(self.notes) do
+        note:mousereleased(x, y, button)
     end
 end
 

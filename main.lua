@@ -71,6 +71,7 @@ function guiUpdate(dt)
     gui.Label{text = "Zoom:", size = {50}}
     if gui.Slider{info = zoomSlider, size = {100}} then
         score.boundSeconds = zoomSlider.value * 8
+        score:updateNotePosition()
     end
     
     gui.group.pop{}
@@ -89,6 +90,9 @@ function guiUpdate(dt)
     
     -- Play Button
     if gui.Button{id = "Play", text = "Play"} then
+        if score.bpm == 0 then
+            love.window.showMessageBox("Error", "Set BPM First", "info")
+        end
         if score.isPaused then score.music:resume() else score.music:play() end
         score.isPaused = false
     end
@@ -108,6 +112,7 @@ function guiUpdate(dt)
     end
     if gui.Slider{info = musicSlider, size = {250}} then
         score.isPaused = true
+        score:updateNotePosition()
         score.music:pause()
         score.music:seek(musicSlider.value * score.duration)
     end
@@ -152,12 +157,14 @@ function love.keypressed(key, code)
 end
 
 function love.mousepressed(x, y, button)
+    score:mousepressed(x, y, button)
     if button == "l" then
         mousePressed = true
     end
 end
 
 function love.mousereleased(x, y, button)
+    score:mousereleased(x, y, button)
     if button == "l" then
         mousePressed = false
         mouseReleaseTrigger = true
