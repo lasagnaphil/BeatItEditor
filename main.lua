@@ -12,7 +12,7 @@ local zoomSlider = {value = .5}
 local musicSlider = {value = .5}
 
 function love.load()
-    love.window.setMode(1024, 768)
+    love.window.setMode(1200, 800)
     score = Score:new()
 end
 

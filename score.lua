@@ -16,10 +16,11 @@ function Score:initialize()
     self.bpm = 0
     self.position = 0
     
-    self.target = { x = 100, y = 200 }
-    self.bounds = { l = 50, r = 750 }
-    self.boundLength = self.bounds.r - self.target.x
-    self.boundSeconds = 8 -- (how many seconds of notes shown in the screen
+    self.target = { x = 600, y = 200 }
+    self.bounds = { l = 50, r = 1150 }
+    self.boundLength = self.bounds.r - self.bounds.l
+    self.boundSeconds = 8 -- (how many seconds of notes shown in the screen)
+    self.barNumber = 4
     
     self.io = IO:new()
 end
@@ -55,7 +56,7 @@ end
 
 function Score:updateNotePosition()
     for _,note in ipairs(self.notes) do
-        note:updatePosition(self)
+        note:updateX(self)
     end
 end
 function Score:addCheckpoint()
@@ -66,6 +67,9 @@ function Score:update(dt)
     self.position = self.music:tell("seconds")
     for _,note in ipairs(self.notes) do
         note:update(dt, self)
+        if note.toDestroy then
+            table.remove(self.notes,_)
+        end
     end 
 end
 
@@ -76,6 +80,26 @@ function Score:draw()
     for _,note in ipairs(self.notes) do
         note:draw(self)
     end
+    -- draw the lines that separate the bars
+    love.graphics.setColor(255,255,255)
+    local barSeconds = (self.barNumber * (self.quantizedTime or 0.5))
+    local barPos = math.floor((self.position-self.boundSeconds/2)/barSeconds)* barSeconds
+    while barPos < self.position + self.boundSeconds/2 do
+        function convertPosToX(pos)
+            return (pos-self.position)*self.boundLength / self.boundSeconds
+        end
+        local barX = convertPosToX(barPos)
+        love.graphics.line(self.target.x - barX,self.target.y-20,self.target.x - barX,self.target.y+20)
+        for i=1,3 do
+            barPos = barPos + barSeconds/4
+            barX = convertPosToX(barPos)
+            love.graphics.line(self.target.x - barX,self.target.y-10,self.target.x - barX,self.target.y+10)
+        end
+        barPos = barPos + barSeconds/4
+    end
+    love.graphics.setColor(100,100,100)
+    --love.graphics.rectangle("fill",0,self.target.y-50,self.bounds.l,self.target.y+50)
+    --slove.graphics.rectangle("fill",self.bounds.r,self.target.y-50,love.window.getWidth(),self.target.y+50)
 end
 
 function Score:mousepressed(x, y, button)
@@ -86,7 +110,7 @@ end
 
 function Score:mousereleased(x, y, button)
     for _,note in ipairs(self.notes) do
-        note:mousereleased(x, y, button, self)
+        note:mousereleased(x-self.target.x, y-self.target.y, button, self)
     end
 end
 

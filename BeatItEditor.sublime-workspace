@@ -23,15 +23,7 @@
 			"file": "score.lua",
 			"settings":
 			{
-				"buffer_size": 2551,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "io.lua",
-			"settings":
-			{
-				"buffer_size": 667,
+				"buffer_size": 3763,
 				"line_ending": "Windows"
 			}
 		},
@@ -39,7 +31,7 @@
 			"file": "note.lua",
 			"settings":
 			{
-				"buffer_size": 2298,
+				"buffer_size": 2399,
 				"line_ending": "Windows"
 			}
 		}
@@ -221,7 +213,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -237,8 +229,8 @@
 						"selection":
 						[
 							[
-								874,
-								874
+								3680,
+								3680
 							]
 						],
 						"settings":
@@ -251,7 +243,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -260,15 +252,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2551,
+						"buffer_size": 3763,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								3303,
+								3303
 							]
 						],
 						"settings":
@@ -281,54 +273,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "io.lua",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 667,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "note.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2298,
+						"buffer_size": 2399,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2298,
-								2298
+								1646,
+								1646
 							]
 						],
 						"settings":
@@ -338,10 +300,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 864.0,
+						"translation.y": 108.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
