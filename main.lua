@@ -46,8 +46,7 @@ function guiUpdate(dt)
     gui.Input{info = bpmInput, size = {100}}
     if gui.Button{id = "SetBPM", text = "Set"} then
         -- set the score object's bpm to the input
-        score.bpm = tonumber(bpmInput.text)
-        if not score.bpm then
+        if not score:setBPM(tonumber(bpmInput.text)) then
             love.window.showMessageBox("Error", "BPM must be a number", "info")
         end
     end

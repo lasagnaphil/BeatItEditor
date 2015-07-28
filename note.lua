@@ -18,12 +18,21 @@ function Note:update(dt, score)
             self.x = love.mouse.getX() - score.target.x - self.dragging.diffX
         end
     else
-        self:updatePosition(score)
+        self:updateX(score)
     end
 end
 
-function Note:updatePosition(score)
+function Note:updateX(score)
     self.x = ((self.position - score.position) / score.boundSeconds) * (-score.boundLength)
+end
+
+function Note:updatePositionByX(score)
+    self.position = score.position - self.x * score.boundSeconds / score.boundLength
+end
+
+function Note:quantize(score)
+    local quantizedPosition = score.quantizedTime * math.floor(self.position / score.quantizedTime + 0.5)
+    self.position = quantizedPosition
 end
 
 function Note:draw(score)
@@ -50,14 +59,20 @@ function Note:mousepressed(x, y, button)
         self.dragging.active = true
         self.dragging.diffX = x - self.x
         self.dragging.diffY = y - self.y
+
     elseif button == "r" then
         -- right click; do nothing yet
     end
 end
 
 
-function Note:mousereleased(x, y, button)
-    if button == "l" then self.dragging.active = false end
+function Note:mousereleased(x, y, button, score)
+    if button == "l" then
+        self.dragging.active = false
+        self:updatePositionByX(score)
+        self:quantize(score)
+        self:updateX(score)
+    end
 end
 
 return Note

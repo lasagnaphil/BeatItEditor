@@ -33,13 +33,24 @@ function Score:loadMusic(filename)
 end
 
 function Score:setBPM(bpm)
-    self.bpm = bpm
-    self.quantizedTime = 60 / bpm
+    if bpm then
+        self.bpm = bpm
+        self.quantizedTime = 60 / bpm
+        return true
+    else
+        return false
+    end
 end
 
-function Score:addNote(pos, noteType)
+function Score:addNote(pos)
     local quantizedPosition = self.quantizedTime * math.floor(self.position / self.quantizedTime + 0.5)
-    table.insert(self.notes, Note:new((pos or quantizedPosition), (noteType or "default")))
+    local foundDuplicate = false
+    for _,note in ipairs(self.notes) do
+        if note.position == quantizedPosition then
+            foundDuplicate = true
+        end
+    end
+    if not foundDuplicate then table.insert(self.notes, Note:new((pos or quantizedPosition), "default")) end
 end
 
 function Score:updateNotePosition()
@@ -75,7 +86,7 @@ end
 
 function Score:mousereleased(x, y, button)
     for _,note in ipairs(self.notes) do
-        note:mousereleased(x, y, button)
+        note:mousereleased(x, y, button, self)
     end
 end
 
